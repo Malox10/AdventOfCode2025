@@ -37,11 +37,31 @@ fun main() {
         return score
     }
 
+    fun part2B(input: List<String>): Int {
+        val turns = parse(input)
+
+        var rotation = 50
+        var score = 0
+        turns.map { turn ->
+            val initial = rotation
+            val remainingTurn = turn % 100
+            val fullTurns = (turn / 100).absoluteValue
+            score += fullTurns
+
+            rotation += remainingTurn
+            if(initial != 0  && (rotation <= 0 || rotation > 99)) score++
+            rotation = (rotation + 100) % 100
+        }
+        return score
+    }
+
     val testInput = readInput("Day1Test")
     checkDebug(part1(testInput), 3)
     checkDebug(part2(testInput), 6)
+    checkDebug(part2B(testInput), 6)
 
     val input = readInput("Day1")
     "part1: ${part1(input)}".println()
     "part2: ${part2(input)}".println()
+    "part2B: ${part2B(input)}".println()
 }
