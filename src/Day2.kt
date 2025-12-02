@@ -1,9 +1,3 @@
-import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.log10
-import kotlin.math.pow
-import kotlin.math.roundToInt
-
 fun main() {
     fun parse(input: List<String>): List<Pair<Long, Long>> {
         val line = input[0]
@@ -14,15 +8,18 @@ fun main() {
     }
 
     //divides by 11, 101, 1001 and checks when
-    fun Long.isRepeat(): Boolean {
+    fun Long.isRepeat(repetition: Int = 2): Boolean {
         val string = this.toString()
-        if(string.length % 2 == 1) return false
+        if(string.length % repetition != 0) return false
         if(string.length < 2) return false
 
-        val start = string.substring(0 until string.length/2)
-        val end = string.substring(string.length/2)
+        val segmentLength = string.length / repetition
+        val segments = (0 until repetition).map {
+            val start = it * segmentLength
+            string.substring(start, start + segmentLength)
+        }
 
-        return start == end
+        return segments.distinct().size == 1
 //        var exponent = 1L;
 //        while (true) {
 //            val smallerExponent = exponent / 2
@@ -47,16 +44,25 @@ fun main() {
         return invalidIDs.sum()
     }
 
-    fun part2(input: List<String>): Int {
-        val x = parse(input)
-        return input.size
+    fun part2(input: List<String>): Long {
+        val ranges = parse(input)
+        val invalidIDs = ranges.flatMap { (a, b) ->
+            val repeatNumbers = (a..b).filter { number ->
+                (2..number.toString().length).any {
+                    number.isRepeat(it)
+                }
+            }
+            repeatNumbers
+        }
+
+        return invalidIDs.sum()
     }
 
 
 
     val testInput = readInput("Day2Test")
     checkDebug(part1(testInput), 1227775554)
-//    checkDebug(part2(testInput), 1)
+    checkDebug(part2(testInput), 4174379265)
 
     val input = readInput("Day2")
     "part1: ${part1(input)}".println()
