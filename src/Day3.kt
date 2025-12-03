@@ -24,16 +24,32 @@ fun main() {
         return joltages.sum()
     }
 
-    fun part2(input: List<String>): Int {
-        val x = parse(input)
-        return input.size
+    val arrayLength = 12
+    fun List<Int>.maximumJoltagePart2(prefix: String = "", depth: Int = 1): Long {
+        val remainingLength = arrayLength - depth
+        if(remainingLength < 0) return prefix.toLong()
+
+        val leadDigits = this.take(this.size - remainingLength)
+        val highestDigit = leadDigits.max()
+        val index = leadDigits.indexOfFirst { it == highestDigit }
+
+        val remainingDigits = this.drop(index + 1)
+        return remainingDigits.maximumJoltagePart2("$prefix$highestDigit", depth + 1)
+    }
+
+    fun part2(input: List<String>): Long {
+        val banks = parse(input)
+        val joltages = banks.map {
+            it.maximumJoltagePart2()
+        }
+        return joltages.sum()
     }
 
 
 
     val testInput = readInput("Day3Test")
     checkDebug(part1(testInput), 357)
-//    checkDebug(part2(testInput), 1)
+    checkDebug(part2(testInput), 3121910778619)
 
     val input = readInput("Day3")
     "part1: ${part1(input)}".println()
