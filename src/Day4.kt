@@ -9,40 +9,48 @@ fun main() {
          0 to -1,           0 to 1,
          1 to -1,  1 to 0,  1 to 1
     )
-    fun part1(input: List<String>): Int {
-        val paperGrid = parse(input)
-
-        var accessible = 0
+    fun List<List<Boolean>>.findAccessibleRolls(): List<Pair<Int, Int>> {
         val accessibleSpots = mutableListOf<Pair<Int, Int>>()
-        paperGrid.forEachIndexed { rowIndex, row ->
-            row.forEachIndexed inner@ { colIndex, isPaper ->
-                if(!isPaper) return@inner
+        this.forEachIndexed { rowIndex, row ->
+            row.forEachIndexed inner@{ colIndex, isPaper ->
+                if (!isPaper) return@inner
 
                 val currentPosition = rowIndex to colIndex
                 val neighbourCount = directions.count {
                     val neighbor = currentPosition + it
-                    val isOccupied = paperGrid[neighbor] ?: false
+                    val isOccupied = this[neighbor] ?: false
                     isOccupied
                 }
-                if(neighbourCount < 4) {
-                    accessible++
+                if (neighbourCount < 4) {
                     accessibleSpots.add(currentPosition)
                 }
             }
         }
-        return accessible
+        return accessibleSpots
+    }
+
+    fun part1(input: List<String>): Int {
+        val paperGrid = parse(input)
+        return paperGrid.findAccessibleRolls().size
     }
 
     fun part2(input: List<String>): Int {
-        val x = parse(input)
-        return input.size
+        val paperGrid = parse(input).map { it.toMutableList() }
+        var removed = 0
+        do {
+            val removable = paperGrid.findAccessibleRolls()
+            removed += removable.size
+            removable.forEach { paperGrid[it] = false }
+        } while(removable.isNotEmpty())
+
+        return removed
     }
 
 
 
     val testInput = readInput("Day4Test")
     checkDebug(part1(testInput), 13)
-//    checkDebug(part2(testInput), 1)
+    checkDebug(part2(testInput), 43)
 
     val input = readInput("Day4")
     "part1: ${part1(input)}".println()
