@@ -21,16 +21,38 @@ fun main() {
         return answers.sum()
     }
 
-    fun part2(input: List<String>): Int {
-        val x = parse(input)
-        return input.size
+    fun part2(input: List<String>): Long {
+        val numbers = input.dropLast(1)
+        val numberLength = numbers.size
+
+        val operators = input.last()
+
+        val operatorIndices = mutableListOf<Pair<Operator, Int>>()
+        operators.forEachIndexed { index, operator ->
+            if(operator == '*') operatorIndices.add(Operator.Multiply to index)
+            if(operator == '+') operatorIndices.add(Operator.Add to index)
+        }
+
+        val longestLine = numbers.maxOf { it.length }
+        operatorIndices.add(Operator.Multiply to longestLine + 1)
+        val answers = operatorIndices.windowed(2).map { (start, end) ->
+            val parsedNumbers = (start.second..(end.second - 2)).reversed().map { column ->
+                val number = (0 until numberLength).joinToString("") { row ->
+                    val char = numbers.getOrNull(row)?.getOrNull(column) ?: ""
+                    char.toString()
+                }.trim().toLong()
+                number
+            }
+            parsedNumbers.reduce(if(start.first == Operator.Add) Long::plus else Long::times)
+        }
+        return answers.sum()
     }
 
 
 
     val testInput = readInput("Day6Test")
     checkDebug(part1(testInput), 4277556)
-//    checkDebug(part2(testInput), 1)
+    checkDebug(part2(testInput), 3263827)
 
     val input = readInput("Day6")
     "part1: ${part1(input)}".println()
