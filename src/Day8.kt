@@ -1,4 +1,5 @@
 import kotlin.math.sqrt
+import kotlin.system.measureTimeMillis
 
 fun main() {
     data class Node(val x: Int, val y: Int, val z :Int) {
@@ -108,9 +109,9 @@ fun main() {
                 }
             }
 
-            println("lowestWorkingSolution: $lowestWorkingSolution")
-            println("currentNumberOfLinks: $currentNumberOfLinks")
-            println("highestFail: $highestFail")
+//            println("lowestWorkingSolution: $lowestWorkingSolution")
+//            println("currentNumberOfLinks: $currentNumberOfLinks")
+//            println("highestFail: $highestFail")
             if(lowestWorkingSolution - highestFail == 1) {
                 val winningLink = distances[lowestWorkingSolution - 1]
                 return winningLink.first.x.toLong() * winningLink.second.x
@@ -125,6 +126,9 @@ fun main() {
     checkDebug(part2(testInput), 25272)
 
     val input = readInput("Day8")
-    "part1: ${part1(input)}".println()
-    "part2: ${part2(input)}".println()
+    val time = measureTimeMillis {
+        "part1: ${part1(input)}".println()
+        "part2: ${part2(input)}".println()
+    }
+    kotlin.io.println(time)
 }
