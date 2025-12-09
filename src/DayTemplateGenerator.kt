@@ -5,7 +5,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers
 
-const val name = "1"
+const val name = "9"
 fun main() {
     val fullName = "Day$name"
 
