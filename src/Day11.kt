@@ -1,5 +1,3 @@
-import java.util.Queue
-
 fun main() {
     fun parse(input: List<String>): Map<String, List<String>> {
         val connections = input.associate { line ->
@@ -37,16 +35,39 @@ fun main() {
         return score
     }
 
-    fun part2(input: List<String>): Int {
-        val x = parse(input)
-        return input.size
+    data class Key(val current: String, val fft: Boolean, val dac: Boolean)
+    val cache = mutableMapOf<Key, Long>()
+    fun Map<String, List<String>>.findOutRecursive(current: String = "svr", fft: Boolean = false, dac: Boolean = false): Long {
+        if(current == "out") {
+            return if(fft && dac) 1L else 0L
+        }
+        val key = Key(current, fft, dac)
+        if(cache.containsKey(key)) {
+            return cache[key]!!
+        }
+
+        val nextNodes = this[current]!!
+        val value =  nextNodes.sumOf { node ->
+            val newFft = fft || node == "fft"
+            val newDac = dac || node == "dac"
+            findOutRecursive(node, newFft, newDac)
+        }
+
+        cache[key] = value
+        return value
     }
 
-
+    fun part2(input: List<String>): Long {
+        val connections = parse(input)
+        cache.clear()
+        return connections.findOutRecursive()
+    }
 
     val testInput = readInput("Day11Test")
     checkDebug(part1(testInput), 5)
-//    checkDebug(part2(testInput), 1)
+
+    val testInputPart2 = readInput("Day11TestPart2")
+    checkDebug(part2(testInputPart2), 2)
 
     val input = readInput("Day11")
     "part1: ${part1(input)}".println()
